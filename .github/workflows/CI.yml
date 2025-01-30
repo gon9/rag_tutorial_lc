@@ -42,5 +42,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: demotaniguchi.azurecr.io${{ env.REPO }}:${{ github.sha }}  #ghcr.io/${{ env.REPO }}:${{ github.sha }}
+          tags: demotaniguchi.azurecr.io/${{ env.REPO }}:${{ github.sha }}  #ghcr.io/${{ env.REPO }}:${{ github.sha }}
           file: ./Dockerfile
