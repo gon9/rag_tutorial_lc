@@ -2,7 +2,7 @@ name: Trigger auto deployment for demo-container
 
 #env:
 #  AZURE_CONTAINER_APP_NAME: demo-container
-#  AZURE_GROUP_NAME: demo-container
+#  AZURE_GROUP_NAME: huggingface-tutorial  
 
 # When this action will be executed
 on:
@@ -58,7 +58,7 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp registry set -n demo-container -g demo-container --server demotaniguchi.azurecr.io --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }}
-            az containerapp update -n demo-container -g demo-container --cpu 2 --memory 4Gi
-            az containerapp update -n demo-container -g demo-container --port 7860
-            az containerapp update -n demo-container -g demo-container --image demotaniguchi.azurecr.io/${{ env.REPO }}:${{ github.sha }}
+            az containerapp registry set -n demo-container -g huggingface-tutorial --server demotaniguchi.azurecr.io --username ${{ secrets.ACR_USERNAME }} --password ${{ secrets.ACR_PASSWORD }}
+            az containerapp update -n demo-container -g huggingface-tutorial --cpu 2 --memory 4Gi
+            az containerapp update -n demo-container -g huggingface-tutorial --port 7860
+            az containerapp update -n demo-container -g huggingface-tutorial --image demotaniguchi.azurecr.io/${{ env.REPO }}:${{ github.sha }}
