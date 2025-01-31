@@ -4,9 +4,9 @@ services:
   rag_app:
     build: .
     ports:
-      - "7860:7860"
+      - "7860:7860"  # Gradioのポートをマッピング
     env_file:
       - .env
     volumes:
-      - ./:/app
-    command: poetry run python src/app.py
+      - ./data:/app/data  # ホストのdataディレクトリをコンテナ内にマウント
+    restart: unless-stopped  # コンテナの再起動ポリシー
