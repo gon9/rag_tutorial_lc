@@ -1,5 +1,5 @@
 # ビルドステージ
-FROM python:3.12-slim-bookworm as builder
+FROM python:3.13-slim-bookworm as builder
 
 WORKDIR /app
 
@@ -13,12 +13,12 @@ RUN poetry config virtualenvs.create false\
 COPY src /app/src
 
 # 実行ステージ
-FROM python:3.12-slim-bookworm as runner
+FROM python:3.13-slim-bookworm as runner
 
 WORKDIR /app
 
 # 必要なPythonパッケージをコピー
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 # アプリケーションコードをコピー
 COPY --from=builder /app/src /app/src
 
