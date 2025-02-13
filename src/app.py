@@ -3,15 +3,15 @@ import logging
 from dotenv import load_dotenv
 import gradio as gr
 
-from langchain.chains import LLMChain
-from langchain.chat_models import ChatOpenAI  # ChatGPT系モデル
+from langchain_openai.chat_models import ChatOpenAI  # ChatGPT系モデル
 from langchain.prompts import PromptTemplate
 
 
 from extract_text import extract_text_from_pdf
 from split_text import split_text
 from create_embeddings import create_vectorstore
-from qa_chain import create_qa_chain, answer_question
+from chat_qa_chain import create_chat_completion_chain
+from rag_qa_chain import create_qa_chain
 
 # ログ設定
 logging.basicConfig(level=logging.INFO)
@@ -49,43 +49,22 @@ def load_or_create_vectorstore():
         vectorstore.save_local(VECTORSTORE_PATH)
         return vectorstore
 
-def create_chat_completion_chain():
-    """
-    通常のChat Completion用のチェーン。
-    ChatOpenAI や LLMChainを使って作成する簡易例。
-    """
-    llm = ChatOpenAI(
-        openai_api_key=OPENAI_API_KEY,
-        model_name="gpt-3.5-turbo",  # 使いたいモデルを指定
-        temperature=0.7
-    )
-
-    # プロンプトテンプレートを最低限定義
-    prompt = PromptTemplate(
-        input_variables=["user_input"],
-        template="""
-        あなたは有能なアシスタントです。以下のユーザーの質問に答えてください。
-        質問: {user_input}
-        """
-    )
-    return LLMChain(llm=llm, prompt=prompt)
-
-def chat_interface(question, use_rag, rag_chain, chat_chain):
+def chat_interface(query, use_rag, rag_chain, chat_chain):
     """
     use_rag が TrueならRAGモードの回答、
     Falseなら通常のChat Completionモードの回答を行う。
     """
     if use_rag:
         logger.info("RAGモードで回答します。")
-        return answer_question(rag_chain, question)
+        return rag_chain.invoke(query)
     else:
         logger.info("Chat Completionモードで回答します。")
-        return chat_chain.run(user_input=question)
+        return chat_chain.invoke(query)
 
 def main():
     vectorstore = load_or_create_vectorstore()
     logger.info("質問応答チェーンを作成中...")
-    rag_chain = create_qa_chain(vectorstore, OPENAI_API_KEY)
+    rag_chain = create_qa_chain(vectorstore)
 
     logger.info("Chat Completion用のチェーンを作成中...")
     chat_chain = create_chat_completion_chain()
